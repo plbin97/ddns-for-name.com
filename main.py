@@ -1,16 +1,16 @@
-# This is a sample Python script.
+from src import connectToAPI
+from src import readConfig
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+#
+# # print(connectToAPI.getRecordList("plbin97", "fb8f398a9179193e330f6e8b262ff3d2b2efbd41", "teenet.me"))
+# data = {
+#     'id': 195929576,
+#     'domainName': 'teenet.me',
+#     'host': 'home',
+#     'fqdn': 'home.teenet.me.',
+#     'type': 'A',
+#     'answer': '13.13.13.13',
+#     'ttl': 300
+# }
+# print(connectToAPI.updateRecord("plbin97", "fb8f398a9179193e330f6e8b262ff3d2b2efbd41", "teenet.me", 195929576, data))
+# print()
