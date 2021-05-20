@@ -1,5 +1,6 @@
 import requests
 from requests.auth import HTTPBasicAuth
+import logging
 
 
 def getRecordList(tokenName: str, token: str, domain: str) -> list or None:
@@ -26,7 +27,7 @@ def getRecordList(tokenName: str, token: str, domain: str) -> list or None:
     """
     r = requests.get(f"https://api.name.com/v4/domains/{domain}/records", auth=HTTPBasicAuth(tokenName, token))
     if r.status_code != 200:
-        print(r.text)
+        logging.error(r.text)
         return None
     return r.json()["records"]
 
@@ -54,9 +55,27 @@ def getRecord(tokenName: str, token: str, domain: str, recordID: int) -> dict or
     """
     r = requests.get(f"https://api.name.com/v4/domains/{domain}/records/{recordID}", auth=HTTPBasicAuth(tokenName, token))
     if r.status_code != 200:
-        print(r.text)
+        logging.error(r.text)
         return None
     return r.json()
+
+
+def deleteRecord(tokenName: str, token: str, domain: str, recordID: int) -> bool:
+    """
+    :param tokenName:
+    :param token:
+    Token name and token from https://www.name.com/account/settings/api
+    :param domain: your domain name, such as example.org
+    :param recordID: The record ID; you can get it from getRecordList
+    :return:
+    if error, return false;
+    if no error, then return ture
+    """
+    r = requests.delete(f"https://api.name.com/v4/domains/{domain}/records/{recordID}", auth=HTTPBasicAuth(tokenName, token))
+    if r.status_code != 200:
+        logging.error(r.text)
+        return False
+    return True
 
 
 def updateRecord(tokenName: str, token: str, domain: str, recordID: int, newRecord: dict) -> bool:
@@ -83,6 +102,32 @@ def updateRecord(tokenName: str, token: str, domain: str, recordID: int, newReco
     """
     r = requests.put(f"https://api.name.com/v4/domains/{domain}/records/{recordID}", auth=HTTPBasicAuth(tokenName, token), json=newRecord)
     if r.status_code != 200:
-        print(r.text)
+        logging.error(r.text)
         return False
     return True
+
+
+def createRecord(tokenName: str, token: str, domain: str, newRecord: dict) -> bool:
+    """
+    :param tokenName:
+    :param token:
+    Token name and token from https://www.name.com/account/settings/api
+    :param domain: your domain name, such as example.org
+    :param newRecord: new record, should follows the format of
+    {
+        "domainName": "example.org",
+        "host": "xyz",
+        "type": "MX",
+        "answer": "xxx.xxx.xxx.xxx",
+    }
+    :return:
+    If no error, then return true.
+    If error, then return false.
+    """
+    r = requests.post(f"https://api.name.com/v4/domains/{domain}/records", auth=HTTPBasicAuth(tokenName, token), json=newRecord)
+
+    if r.status_code != 200:
+        logging.error(r.text)
+        return False
+    return True
+

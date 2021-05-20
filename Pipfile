@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 requests = "*"
-ipify = "*"
+pytest = "*"
 
 [dev-packages]
 

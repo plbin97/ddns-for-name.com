@@ -1,8 +1,6 @@
 import configparser
 import logging
-
-config = configparser.ConfigParser()
-config.read("../config.ini")
+from os import path
 
 
 def errorDisplay(tag):
@@ -10,49 +8,53 @@ def errorDisplay(tag):
     exit(0)
 
 
-"""
-Configuration check
-"""
-if 'account' not in config:
-    errorDisplay('account')
+class ReadConfig:
 
-if 'domain' not in config:
-    errorDisplay('domain')
+    def __init__(self, configFile):
+        if not path.exists(configFile):
+            raise Exception("Configuration file does not exist")
 
-if 'local' not in config:
-    errorDisplay('local')
+        self.config = configparser.ConfigParser()
+        self.config.read(configFile)
 
-if 'tokenName' not in config['account']:
-    errorDisplay('tokenName')
+        """
+        Configuration check
+        """
+        if 'account' not in self.config:
+            errorDisplay('account')
 
-if 'token' not in config['account']:
-    errorDisplay('token')
+        if 'domain' not in self.config:
+            errorDisplay('domain')
 
-if 'domain' not in config['domain']:
-    errorDisplay('tokenName')
+        if 'local' not in self.config:
+            errorDisplay('local')
 
-if 'host' not in config['domain']:
-    errorDisplay('tokenName')
+        if 'tokenName' not in self.config['account']:
+            errorDisplay('tokenName')
 
-if 'interval_of_check' not in config['local']:
-    errorDisplay('tokenName')
+        if 'token' not in self.config['account']:
+            errorDisplay('token')
 
+        if 'domain' not in self.config['domain']:
+            errorDisplay('tokenName')
 
-def getTokenName():
-    return config['account']['tokenName']
+        if 'host' not in self.config['domain']:
+            errorDisplay('tokenName')
 
+        if 'interval_of_check' not in self.config['local']:
+            errorDisplay('tokenName')
 
-def getToken():
-    return config['account']['token']
+    def getTokenName(self):
+        return self.config['account']['tokenName']
 
+    def getToken(self):
+        return self.config['account']['token']
 
-def getDomain():
-    return config['domain']['domain']
+    def getDomain(self):
+        return self.config['domain']['domain']
 
+    def getHost(self):
+        return self.config['domain']['host']
 
-def getHost():
-    return config['domain']['host']
-
-
-def getIntervalOfCheck():
-    return config['local']['interval_of_check']
+    def getIntervalOfCheck(self):
+        return self.config['local']['interval_of_check']
