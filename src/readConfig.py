@@ -4,8 +4,7 @@ from os import path
 
 
 def errorDisplay(tag):
-    logging.error(f"Configuration error, tag \"{tag}\" not found")
-    exit(0)
+    raise Exception(f"Configuration error, tag \"{tag}\" not found")
 
 
 class ReadConfig:
@@ -44,6 +43,11 @@ class ReadConfig:
         if 'interval_of_check' not in self.config['local']:
             errorDisplay('tokenName')
 
+        if not self.config['local']['interval_of_check'].isnumeric():
+            raise Exception("Configuration interval_of_check should be a number")
+
+        self.intervalOfCheck = int(self.config['local']['interval_of_check'])
+
     def getTokenName(self):
         return self.config['account']['tokenName']
 
@@ -57,4 +61,4 @@ class ReadConfig:
         return self.config['domain']['host']
 
     def getIntervalOfCheck(self):
-        return self.config['local']['interval_of_check']
+        return self.intervalOfCheck

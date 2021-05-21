@@ -117,8 +117,8 @@ def createRecord(tokenName: str, token: str, domain: str, newRecord: dict) -> bo
     {
         "domainName": "example.org",
         "host": "xyz",
-        "type": "MX",
-        "answer": "xxx.xxx.xxx.xxx",
+        "type": "A",
+        "answer": "xxx.xxx.xxx.xxx"
     }
     :return:
     If no error, then return true.

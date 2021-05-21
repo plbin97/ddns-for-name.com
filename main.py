@@ -1,41 +1,47 @@
 import logging
-
+from src import getIP
 from src import connectToAPI
 from src import readConfig
-import ipify
 
-recordList: list = connectToAPI.getRecordList(readConfig.getTokenName(), readConfig.getToken(), readConfig.getDomain())
-if recordList is None:
-    exit(0)
+config = readConfig.ReadConfig('./config.ini')
+localRecord = None
+localIP = getIP.getIP()
 
-onlineRecord = None
-for record in recordList:
-    if readConfig.getHost() + "." + readConfig.getDomain() + "." == record['fqdn']:
-        onlineRecord = record
-        break
+def searchRecordToLocalRecord():
+    recordList: list = connectToAPI.getRecordList(config.getTokenName(), config.getToken(), config.getDomain())
+    if recordList is None:
+        return False
 
-if onlineRecord is None:
-    logging.info("Record not found")
+    for record in recordList:
+        if config.getHost() + "." + config.getDomain() + "." == record['fqdn']:
+            localRecord = record
+            break
+
+if localRecord is None:
+    logging.info("Record not found, creating a new record")
     newRecord = {
-        "domainName": readConfig.getDomain(),
-        "host": readConfig.getHost(),
+        "domainName": config.getDomain(),
+        "host": config.getHost(),
         "type": "MX",
-        "answer": ipify.get_ip(),
+        "answer": localIP,
     }
-    if not connectToAPI.createRecord(readConfig.getTokenName(), readConfig.getToken(), readConfig.getDomain(), newRecord):
+    if not connectToAPI.createRecord(config.getTokenName(), config.getToken(), config.getDomain(), newRecord):
         logging.error("Create record failed")
         exit(0)
- 
-#
-# # print(connectToAPI.getRecordList("plbin97", "fb8f398a9179193e330f6e8b262ff3d2b2efbd41", "teenet.me"))
-# data = {
-#     'id': 195929576,
-#     'domainName': 'teenet.me',
-#     'host': 'home',
-#     'fqdn': 'home.teenet.me.',
-#     'type': 'A',
-#     'answer': '13.13.13.13',
-#     'ttl': 300
-# }
-# print(connectToAPI.updateRecord("plbin97", "fb8f398a9179193e330f6e8b262ff3d2b2efbd41", "teenet.me", 195929576, data))
-# print()
+    newRecordList = connectToAPI.getRecordList(config.getTokenName(), config.getToken(), config.getDomain())
+
+
+"""
+onlineRecord format: 
+{
+    "id": 123,
+    "domainName": "example.org",
+    "host": "www",
+    "fqdn": "www.example.org.",
+    "type": "A",
+    "answer": "127.0.0.1",
+    "ttl": 300
+}
+"""
+
+while True:
