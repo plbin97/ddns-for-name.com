@@ -2,7 +2,7 @@ import requests
 import logging
 
 
-def getIP():
+def getIP() -> str or None:
     r = requests.get("https://api.ipify.org")
     if r.status_code == 200:
         return r.text
